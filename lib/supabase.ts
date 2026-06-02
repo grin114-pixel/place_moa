@@ -97,8 +97,10 @@ export async function swapCategoryPositions(
 
 export async function insertCategory(name: string, sortOrder?: number): Promise<{ error?: string }> {
   const sortOrderSupported = await detectCategorySortOrderSupport()
-  const payload = sortOrderSupported && sortOrder !== undefined ? { name, sort_order: sortOrder } : { name }
-  const { error } = await supabase.from(TABLES.categories).insert(payload)
+  const { error } =
+    sortOrderSupported && sortOrder !== undefined
+      ? await supabase.from(TABLES.categories).insert({ name, sort_order: sortOrder })
+      : await supabase.from(TABLES.categories).insert({ name })
   if (error) return { error: error.message }
   return {}
 }
